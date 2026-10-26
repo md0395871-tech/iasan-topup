@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IASAN TOPUP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Bree+Serif&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #f0f4f9;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Home Panel Specific Font */
+        #home-sec {
+            font-family: 'Bree Serif', serif;
+        }
+        #account-sec {
+            font-family: 'Bree Serif', serif;
+        }
+        #tutorial-sec {
+            font-family: 'Bree Serif', serif;
+        }
+
+        .nav-gradient {
+            background: white;
+            color: #1e293b;
+        }
+        .active-tab {
+            color: #03a9f4 !important;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        .font-en {
+            font-family: 'Poppins', sans-serif;
+        }
+        .font-bn {
+            font-family: 'Noto Serif Bengali', serif;
+        }
+
+        #home-sec .lang-auto {
+            font-family: 'Bree Serif', serif;
+        }
+        .lang-auto:lang(bn),
+        .lang-auto:lang(bn-BD) {
+            font-family: 'Noto Serif Bengali', serif;
+        }
+
+        .notice-scroll {
+            animation: scroll-left 15s linear infinite;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .method-card {
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .method-card:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .animate-fade-in {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+
+        /* PRODUCT CARD */
+        .product-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .product-card:hover {
+            border-color: #81d4fa;
+        }
+        .product-card.selected {
+            border: 1.5px solid #03a9f4;
+            background-color: #f0f9ff;
+        }
+        .product-bullet {
+            height: 12px;
+            width: 12px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .product-card.selected .product-bullet {
+            background-color: #03a9f4;
+        }
+
+        /* FAB */
+        #fab-container.is-open #fab-toggler {
+            background-color: #dc2626;
+        }
+        #fab-container.is-open #fab-icon-open {
+            transform: rotate(-180deg) scale(0);
+            opacity: 0;
+        }
+        #fab-container.is-open #fab-icon-close {
+            transform: scale(1) rotate(0);
+            opacity: 1;
+        }
+        #fab-container.is-open #fab-options {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .aspect-video {
+            aspect-ratio: 16 / 9;
+        }
+
+        /* Step Transition */
+        .step-transition {
+            animation: slideInRight 0.3s ease-out forwards;
+        }
+        @keyframes slideInRight {
+            from {
+                transform: translateX(10%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .theme-bkash {
+            background-color: #e2136e !important;
+            border-color: #e2136e !important;
+        }
+        .theme-nagad {
+            background-color: #f7941d !important;
+            border-color: #f7941d !important;
+        }
+        .theme-rocket {
+            background-color: #8c3494 !important;
+            border-color: #8c3494 !important;
+        }
+
+        .text-theme-bkash {
+            color: #e2136e !important;
+        }
+        .text-theme-nagad {
+            color: #f7941d !important;
+        }
+        .text-theme-rocket {
+            color: #8c3494 !important;
+        }
+
+        /* PAYMENT OPTION CARD */
+        .pay-option-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .pay-option-card.selected {
+            border: 2px solid #ef4444;
+        }
+        .pay-option-card.selected::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-bottom-right-radius: 6px;
+            z-index: 10;
+        }
+
+        /* Related Products */
+        .related-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .related-card:hover {
+            border-color: #81d4fa;
+            background: white;
+        }
+        .related-card.selected {
+            border: 1.5px solid #03a9f4;
+            background-color: #f0f9ff;
+        }
+
+        /* Offer Card */
+        .offer-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .offer-card::before {
+            content: "🔥 SPECIAL OFFER";
+            position: absolute;
+            top: 8px;
+            right: -40px;
+            transform: rotate(45deg);
+            background: #dc2626;
+            color: white;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 4px 50px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .offer-card .offer-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: #dc2626;
+        }
+        .offer-card .original-price {
+            font-size: 16px;
+            color: #6b7280;
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+        .offer-card .discount-badge {
+            background: #dc2626;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .countdown-timer {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            font-family: 'Inter', monospace;
+        }
+        .countdown-timer .time-block {
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            padding: 6px 14px;
+            text-align: center;
+            min-width: 50px;
+        }
+        .countdown-timer .time-block .num {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1.2;
+        }
+        .countdown-timer .time-block .label {
+            font-size: 8px;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .offer-expired {
+            opacity: 0.6;
+            filter: grayscale(0.5);
+        }
+        .offer-expired .countdown-timer .time-block .num {
+            color: #94a3b8;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="select-none bg-slate-50">
+
+    <div id="app-content" class="relative max-w-md mx-auto bg-slate-50 min-h-screen shadow-2xl">
+        <!-- HEADER -->
+        <header class="bg-white/90 backdrop-blur-md p-4 sticky top-0 z-40 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-2">
+                <img id="header-logo-img" src="https://placehold.co/150x50?text=Logo" class="h-16 object-contain">
+            </div>
+            <div id="header-balance-container" class="hidden bg-sky-500 px-4 py-2 rounded-full text-sm font-bold text-white border border-sky-600 shadow-md">
+                <i class="fas fa-wallet mr-1"></i> ৳ <span id="header-balance">0</span>
+            </div>
+            <div id="header-login-container">
+                <button onclick="showAuthPage()" class="bg-sky-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md hover:bg-sky-700 transition">
+                    <i class="fas fa-sign-in-alt mr-1"></i> Login
+                </button>
+            </div>
+        </header>
+
+        <!-- NOTICE -->
+        <div id="notice-section" class="mb-0 px-3">
+            <div class="bg-sky-500 text-white p-4 relative">
+                <button onclick="this.parentElement.parentElement.style.display='none'" class="absolute top-2 right-2 text-white/80 hover:text-white transition">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+                <div class="pr-6">
+                    <div class="font-bold text-sm mb-1">Notice</div>
+                    <div id="notice-text" class="text-sm">স্বাগতম আমাদের অ্যাপে...</div>
+                </div>
+            </div>
+        </div>
+
+        <main class="p-3 relative pb-20">
+
+            <!-- AUTH SECTION -->
+            <section id="auth-sec" class="hidden animate-fade-in">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative p-6">
+                    <button onclick="showSec('home')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition z-10">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+
+                    <div id="login-view">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Login</h2>
+                        <button onclick="handleGoogleLogin()" class="w-full bg-white border border-gray-300 text-gray-700 font-semibold py-2.5 rounded-lg shadow-sm hover:bg-gray-50 transition flex items-center justify-center gap-3 mb-6">
+                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
+                            Login with Google
+                        </button>
+                        <div class="relative flex py-2 items-center mb-6">
+                            <div class="flex-grow border-t border-gray-200"></div>
+                            <span class="flex-shrink-0 mx-4 text-gray-400 text-xs font-medium">Or sign in with credentials</span>
+                            <div class="flex-grow border-t border-gray-200"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                            <input type="email" id="login-email" placeholder="Email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors">
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                            <input type="password" id="login-pass" placeholder="Password" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors">
+                        </div>
+                        <button onclick="handleLogin()" class="w-full bg-sky-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-sky-700 transition duration-300">
+                            Login
+                        </button>
+                        <div class="mt-6 text-center text-sm text-gray-600">
+                            New user? <button onclick="toggleAuth('register')" class="text-sky-600 font-bold hover:underline">Register Now</button>
+                        </div>
+                    </div>
+
+                    <div id="register-view" class="hidden">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Register</h2>
+                        <button onclick="handleGoogleLogin()" class="w-full bg-white border border-gray-300 text-gray-700 font-semibold py-2.5 rounded-lg shadow-sm hover:bg-gray-50 transition flex items-center justify-center gap-3 mb-6">
+                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
+                            Sign up with Google
+                        </button>
+                        <div class="relative flex py-2 items-center mb-6">
+                            <div class="flex-grow border-t border-gray-200"></div>
+                            <span class="flex-shrink-0 mx-4 text-gray-400 text-xs font-medium">Or sign up with credentials</span>
+                            <div class="flex-grow border-t border-gray-200"></div>
+                        </div>
+                        <div class="space-y-4 mb-6">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-1">Name</label>
+                                <input type="text" id="reg-name" placeholder="Name" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-1">Phone</label>
+                                <input type="number" id="reg-phone" placeholder="Phone" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-1">Email</label>
+                                <input type="email" id="reg-email" placeholder="Email" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-1">Password</label>
+                                <input type="password" id="reg-pass" placeholder="Password" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+                            </div>
+                        </div>
+                        <button onclick="handleRegister()" class="w-full bg-sky-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-sky-700 transition duration-300">
+                            Register
+                        </button>
+                        <div class="mt-6 text-center text-sm text-gray-600">
+                            Already member? <button onclick="toggleAuth('login')" class="text-sky-600 font-bold hover:underline">Login Now</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HOME SECTION -->
+            <section id="home-sec" class="animate-fade-in pb-8">
+                <div id="banner-container" class="mb-6 overflow-hidden shadow-md h-44 bg-gray-200 relative group">
+                    <div id="slider-wrapper" class="flex h-full w-full transition-transform duration-500 ease-out">
+                        <img src="https://placehold.co/600x300/29b6f6/FFF?text=Loading..." class="w-full h-full object-cover flex-shrink-0">
+                    </div>
+                    <div id="slider-dots" class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-10"></div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="grid grid-cols-3 gap-3 mb-5 px-2">
+                    <a id="home-whatsapp" href="#" class="bg-white py-3 px-3 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-gray-100 flex items-center justify-between active:scale-95 transition h-12 no-underline">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center bg-green-50 flex-shrink-0">
+                            <i class="fab fa-whatsapp text-xl text-[#25D366]"></i>
+                        </div>
+                        <span class="text-[12px] font-bold text-gray-700 lang-auto">WhatsApp</span>
+                    </a>
+                    <a id="home-telegram" href="#" class="bg-white py-3 px-3 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-gray-100 flex items-center justify-between active:scale-95 transition h-12 no-underline">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center bg-blue-50 flex-shrink-0">
+                            <i class="fab fa-telegram-plane text-xl text-[#0088cc]"></i>
+                        </div>
+                        <span class="text-[12px] font-bold text-gray-700 lang-auto">Telegram</span>
+                    </a>
+                    <a id="home-app-dl" href="#" target="_blank" class="bg-white py-3 px-3 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-gray-100 flex items-center justify-between active:scale-95 transition h-12 no-underline">
+                        <div class="w-8 h-8 rounded-full overflow-hidden shadow-sm flex-shrink-0">
+                            <img src="https://i.ibb.co/WvrTGr5Y/google-play-store-logo-1273375-804.jpg" class="w-full h-full object-cover" alt="App DL">
+                        </div>
+                        <span class="text-[12px] font-bold text-gray-700 leading-tight lang-auto">App<br>Download</span>
+                    </a>
+                </div>
+
+                <!-- Games List -->
+                <div id="services-list" class="space-y-6 mb-8">
+                    <div class="col-span-3 text-center py-10"><i class="fas fa-spinner fa-spin text-sky-500"></i> Loading Games...</div>
+                </div>
+
+                <!-- Latest Orders -->
+                <div class="mt-8 mb-6">
+                    <h3 class="text-center font-bold text-gray-700 text-xl mb-3 lang-auto" style="letter-spacing: 0.5px">Latest Orders</h3>
+                    <div id="latest-orders-list" class="space-y-3 px-1">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between animate-pulse">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+                                <div>
+                                    <div class="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+                                    <div class="h-3 bg-gray-200 rounded w-32"></div>
+                                </div>
+                            </div>
+                            <div class="h-6 bg-gray-200 rounded-full w-20"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About / Footer -->
+                <div class="mt-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <div class="text-center mb-5">
+                        <img id="about-logo-img" src="https://placehold.co/150x50?text=Logo" class="h-10 mx-auto object-contain mb-2">
+                        <h2 id="about-site-name" class="text-lg font-bold text-gray-800 lang-auto">IASAN TOPUO</h2>
+                        <p class="text-sm text-gray-500 mt-1">Free Fire Diamond TopUp<br>Largest TopUp Site In Bangladesh</p>
+                    </div>
+
+                    <p class="text-xs text-center text-gray-600 mb-5 px-2 leading-relaxed">
+                        <b>নোটিশ:</b> যেকোন অর্ডার জনিত সমস্যায় ওয়ারর্সঅ্যাপে অর্ডারের স্ক্রিনশট এবং পেমেন্টের ট্রানজেকশন আইডি লিখে মেসেজ দিন। ১৮ বছরের নিচে অভিভাবকের অনুমতি ছাড়া অর্ডার করা সম্পূর্ণভাবে নিষিদ্ধ।
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <a id="about-facebook" href="#" target="_blank" class="flex items-center justify-center gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition no-underline">
+                            <i class="fab fa-facebook-f text-lg text-[#1877F2]"></i> <span class="font-semibold text-sm text-gray-700 lang-auto">Facebook</span>
+                        </a>
+                        <a id="about-youtube" href="#" target="_blank" class="flex items-center justify-center gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition no-underline">
+                            <i class="fab fa-youtube text-lg text-[#FF0000]"></i> <span class="font-semibold text-sm text-gray-700 lang-auto">YouTube</span>
+                        </a>
+                        <a id="about-telegram" href="#" target="_blank" class="flex items-center justify-center gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition no-underline">
+                            <i class="fab fa-telegram-plane text-lg text-[#0088cc]"></i> <span class="font-semibold text-sm text-gray-700 lang-auto">Telegram</span>
+                        </a>
+                        <a id="about-whatsapp" href="#" target="_blank" class="flex items-center justify-center gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition no-underline">
+                            <i class="fab fa-whatsapp text-lg text-[#25D366]"></i> <span class="font-semibold text-sm text-gray-700 lang-auto">WhatsApp</span>
+                        </a>
+                    </div>
+
+                    <h3 class="font-bold text-gray-800 text-base text-center mb-4 lang-auto">Contact Us</h3>
+                    <div class="space-y-3">
+                        <a id="contact-whatsapp" href="#" class="block bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition no-underline">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fab fa-whatsapp text-green-500"></i>
+                                    <span class="font-semibold text-sm text-gray-700 lang-auto">Whatsapp HelpLine</span>
+                                </div>
+                                <span class="text-xs text-gray-500">সকাল ৮টা থেকে রাত ১২টা</span>
+                            </div>
+                        </a>
+                        <a id="contact-telegram" href="#" class="block bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition no-underline">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fab fa-telegram-plane text-sky-500"></i>
+                                    <span class="font-semibold text-sm text-gray-700 lang-auto">Telegram HelpLine</span>
+                                </div>
+                                <span class="text-xs text-gray-500">সকাল ৮টা থেকে রাত ১২টা</span>
+                            </div>
+                        </a>
+                        <a id="contact-facebook" href="#" class="block bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition no-underline">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fab fa-facebook-f text-blue-600"></i>
+                                    <span class="font-semibold text-sm text-gray-700 lang-auto">Facebook HelpLine</span>
+                                </div>
+                                <span class="text-xs text-gray-500">সকাল ৮টা থেকে রাত ১২টা</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="text-center border-t border-gray-200 pt-4 mt-6">
+                        <p class="text-xs text-gray-500">
+                            © 2026 IASAN TOPUP | All Rights Reserved | Developed By <a href="https://t.me/DV_IASAN" target="_blank" class="font-bold text-sky-600 no-underline hover:underline">Dev Iasan</a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TUTORIAL SECTION -->
+            <section id="tutorial-sec" class="hidden animate-fade-in pb-20">
+                <div class="bg-white">
+                    <div class="p-6 border-b border-gray-100">
+                        <h2 class="font-semibold text-xl text-gray-800 mb-1 lang-auto">Video Tutorials</h2>
+                        <p class="text-sm text-gray-500">Learn how to use our services</p>
+                    </div>
+                    <div class="p-4">
+                        <div id="tutorial-list-container" class="space-y-4"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HISTORY SECTION -->
+            <section id="history-sec" class="hidden animate-fade-in pb-24">
+                <div class="bg-white border-b border-gray-200 px-4 py-3">
+                    <h2 class="text-lg font-bold text-gray-800">Order History</h2>
+                </div>
+                <div id="history-list" class="px-4 py-3"></div>
+            </section>
+
+            <!-- TOPUP SECTION -->
+            <section id="topup-sec" class="hidden animate-fade-in pb-10 bg-slate-50">
+                <div class="bg-white p-3 rounded-xl shadow-sm flex items-center gap-4 mb-4 border border-gray-100 mx-2 mt-2 relative">
+                    <button onclick="showSec('home')" class="text-gray-600 hover:text-sky-500 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 absolute top-2 right-2">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                    <img id="topup-game-img" src="" class="w-16 h-16 rounded-xl object-cover shadow-sm">
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-base" id="topup-game-title">Game Name</h3>
+                        <p class="text-xs text-gray-700 font-medium" id="topup-sub-title">Game / Topup</p>
+                    </div>
+                </div>
+
+                <!-- Step 1: Select Package -->
+                <div class="bg-white p-3 rounded-xl shadow-sm mb-4 border border-gray-100 mx-2">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="bg-red-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-md">1</span>
+                        <h3 class="font-bold text-gray-800 text-sm">Select Recharge</h3>
+                    </div>
+                    <div id="product-loader" class="text-center py-10 hidden">
+                        <i class="fas fa-spinner fa-spin text-sky-500 text-2xl"></i>
+                    </div>
+                    <div id="products-grid" class="grid grid-cols-2 gap-2"></div>
+                    <div class="mt-3 text-right">
+                        <a href="#" onclick="showSec('tutorial')" class="text-xs text-gray-600 hover:text-sky-600 no-underline">
+                            <i class="fas fa-external-link-alt"></i> কিভাবে অর্ডার করবেন ?
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Step 2: Account Info (UID only) -->
+                <div id="player-id-section" class="bg-white p-3 rounded-xl shadow-sm mb-4 border border-gray-100 mx-2">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-red-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-md">2</span>
+                        <h3 class="font-bold text-gray-800 text-sm">Account Info</h3>
+                    </div>
+                    <div class="mb-2">
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Player ID</label>
+                        <input type="text" id="game-player-id" placeholder="Enter Player ID" class="w-full bg-white border border-gray-300 p-2 rounded focus:outline-none focus:border-sky-500 text-sm text-gray-700">
+                    </div>
+                </div>
+
+                <!-- Step 3: Payment Option -->
+                <div class="bg-white p-3 rounded-xl shadow-sm mb-4 border border-gray-100 mx-2">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="bg-red-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-md">3</span>
+                        <h3 class="font-bold text-gray-800 text-sm">Select Payment</h3>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-2">
+                        <div onclick="selectPaymentOption('wallet')" id="opt-wallet" class="pay-option-card selected">
+                            <div class="h-20 flex flex-col items-center justify-center p-2">
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-wallet text-orange-500 text-2xl"></i>
+                                    <span class="font-bold text-lg text-gray-800">ওয়ালেট</span>
+                                </div>
+                            </div>
+                            <div class="bg-gray-200 text-center py-1 text-xs font-bold text-gray-600">Wallet Pay</div>
+                        </div>
+                        <div onclick="selectPaymentOption('instant')" id="opt-instant" class="pay-option-card">
+                            <div class="h-20 flex items-center justify-center gap-1 p-2">
+                                <img src="https://i.ibb.co.com/7N6nH6P6/images.png" class="h-5 object-contain">
+                                <img src="https://i.ibb.co.com/LDLfDhC9/images.jpg" class="h-4 object-contain">
+                                <img src="https://i.ibb.co.com/mr7Hs740/images-1.png" class="h-5 object-contain">
+                            </div>
+                            <div class="bg-gray-200 text-center py-1 text-xs font-bold text-gray-600">Instant Pay</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mb-4 px-1">
+                        <i class="fas fa-info-circle text-gray-400 text-xs"></i>
+                        <p class="text-[10px] text-gray-500">আপনার একাউন্ট ব্যালেন্স <span class="text-blue-600 font-bold">৳<span id="topup-balance-display">0.00</span></span></p>
+                    </div>
+                    <button onclick="processOrder()" class="w-full bg-[#4a148c] text-white py-3 rounded-lg font-bold shadow-lg hover:bg-[#380e6d] transition text-sm">
+                        Buy Now
+                    </button>
+                </div>
+
+                <!-- RELATED PRODUCTS -->
+                <div id="related-products-section" class="bg-white p-3 rounded-xl shadow-sm mb-4 border border-gray-100 mx-2 hidden">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-link text-blue-500"></i>
+                        <h3 class="font-bold text-gray-800 text-sm">Related Packages</h3>
+                    </div>
+                    <div id="related-products-grid" class="grid grid-cols-2 gap-2"></div>
+                </div>
+
+                <!-- Game Rules -->
+                <div id="game-rules-box" class="bg-white p-3 rounded-xl shadow-sm mb-6 border border-gray-100 mx-2">
+                    <h3 class="font-bold text-gray-800 text-sm mb-2">Rules & Conditions</h3>
+                    <div id="game-rules-text" class="text-xs text-gray-700 leading-relaxed space-y-2"></div>
+                </div>
+                <span id="total-price" class="hidden">0</span>
+            </section>
+
+            <!-- ADD MONEY SECTION -->
+            <section id="addmoney-sec" class="hidden animate-fade-in pb-20 bg-[#f8fafc] min-h-screen">
+                <div id="am-step-1" class="step-transition">
+                    <div class="bg-white p-6 shadow-sm border-b border-gray-100 mb-6">
+                        <h2 class="font-bold text-lg text-gray-800 uppercase tracking-wide">Add Money</h2>
+                    </div>
+                    <div class="px-4">
+                        <div class="bg-white rounded-lg p-8 shadow-sm border border-gray-200 mb-6 text-center">
+                            <label class="block text-gray-500 text-sm font-bold mb-4 uppercase tracking-wider">Enter Amount to Deposit</label>
+                            <div class="relative mb-6 max-w-[200px] mx-auto">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-2xl font-bold text-gray-400">৳</span>
+                                <input type="number" id="new-amount-input" value="" class="w-full border-b-2 border-gray-300 py-2 pl-8 pr-2 text-center text-3xl font-bold text-gray-800 focus:outline-none focus:border-red-500 transition-colors bg-transparent" placeholder="">
+                            </div>
+                            <button onclick="goToMethodStep()" class="w-full bg-sky-600 text-white font-bold py-3.5 rounded shadow-lg hover:bg-sky-700 active:scale-95 transition-all text-sm uppercase tracking-wide">
+                                PROCEED TO PAYMENT
+                            </button>
+                        </div>
+                        <div class="mt-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fab fa-youtube text-red-600"></i>
+                                <h3 class="font-bold text-gray-700 text-sm">Tutorial: How to Add Money</h3>
+                            </div>
+                            <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 p-1">
+                                <div class="relative w-full aspect-video">
+                                    <iframe id="new-tutorial-video" class="w-full h-full rounded" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="How to Add Money" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="am-step-2" class="hidden step-transition h-screen flex flex-col bg-[#f0f4f7]">
+                    <div class="bg-white p-3 flex items-center justify-between shadow-sm sticky top-0 z-10">
+                        <button onclick="backToAmountStep()" class="text-gray-500 w-8 h-8 flex items-center justify-center">
+                            <i class="fas fa-arrow-left text-lg"></i>
+                        </button>
+                        <div class="text-right">
+                            <img src="" id="step2-logo" class="h-8 object-contain inline-block">
+                        </div>
+                        <button onclick="showSec('home')" class="text-gray-400">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-center items-center px-6">
+                        <div class="bg-white rounded-full w-32 h-32 flex items-center justify-center shadow-sm border border-gray-100 mb-6 p-4">
+                            <img src="" id="step2-center-logo" class="w-full object-contain">
+                        </div>
+                        <h2 class="text-gray-600 font-medium mb-8 text-lg">Auto Pay</h2>
+                        <div class="w-full bg-[#003399] text-white py-2.5 text-center text-sm font-bold rounded-t-lg mb-0 shadow-md">
+                            মোবাইল ব্যাংকিং
+                        </div>
+                        <div class="w-full grid grid-cols-2 gap-4 bg-white p-4 rounded-b-lg shadow-sm border border-gray-200 border-t-0">
+                            <button onclick="goToPaymentPage('bKash', 'theme-bkash', 'https://i.ibb.co.com/7N6nH6P6/images.png')" class="bg-white border border-gray-200 rounded-lg p-2 flex items-center justify-center hover:border-pink-500 hover:shadow-md transition h-16">
+                                <img src="https://i.ibb.co.com/7N6nH6P6/images.png" class="h-8 object-contain">
+                            </button>
+                            <button onclick="goToPaymentPage('Nagad', 'theme-nagad', 'https://i.ibb.co.com/LDLfDhC9/images.jpg')" class="bg-white border border-gray-200 rounded-lg p-2 flex items-center justify-center hover:border-orange-500 hover:shadow-md transition h-16">
+                                <img src="https://i.ibb.co.com/LDLfDhC9/images.jpg" class="h-6 object-contain">
+                            </button>
+                            <button onclick="goToPaymentPage('Rocket', 'theme-rocket', 'https://i.ibb.co.com/mr7Hs740/images-1.png')" class="bg-white border border-gray-200 rounded-lg p-2 flex items-center justify-center hover:border-purple-500 hover:shadow-md transition h-16">
+                                <img src="https://i.ibb.co.com/mr7Hs740/images-1.png" class="h-6 object-contain">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="am-step-3" class="hidden step-transition min-h-screen bg-[#f0f4f7] relative pb-24">
+                    <div class="bg-white p-3 shadow-sm flex justify-between items-center sticky top-0 z-20">
+                        <button onclick="backToMethodStep()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="flex items-center gap-2">
+                            <span class="bg-gray-100 px-2 py-0.5 rounded text-xs font-bold text-gray-500">English <i class="fas fa-caret-down ml-1"></i></span>
+                            <button onclick="showSec('home')" class="text-gray-400 text-lg"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div class="text-center py-6">
+                        <img id="pay-method-logo" src="" class="h-12 mx-auto object-contain drop-shadow-sm">
+                    </div>
+                    <div class="px-4">
+                        <div class="bg-white rounded-xl p-4 flex items-center gap-4 mb-4 shadow-sm">
+                            <div class="w-12 h-12 rounded-full border border-gray-100 p-1">
+                                <img id="pay-site-logo-small" src="" class="w-full h-full rounded-full object-cover">
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-800 font-bold">Auto Pay</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 mb-4 shadow-sm flex items-center gap-2">
+                            <span class="text-lg font-bold text-gray-700">৳</span>
+                            <span id="pay-amount-display" class="text-xl font-bold text-gray-800">100</span>
+                        </div>
+                        <div id="payment-theme-card" class="rounded-xl shadow-lg overflow-hidden text-white mb-6 relative transition-colors duration-300">
+                            <div class="p-5 text-center">
+                                <h3 class="font-bold text-lg mb-4 drop-shadow-md">ট্রানজেকশন আইডি দিন</h3>
+                                <input type="text" id="pay-trx-input" class="w-full bg-white text-gray-800 text-center py-3 rounded text-sm font-bold shadow-inner focus:outline-none placeholder-gray-400" placeholder="ট্রানজেকশন আইডি দিন">
+                            </div>
+                            <div class="bg-black/10 p-5 text-sm space-y-4 backdrop-blur-sm border-t border-white/20">
+                                <div class="flex gap-2">
+                                    <span class="mt-1">•</span>
+                                    <p>*247# ডায়াল করে আপনার <span class="method-name font-bold">bKash</span> মোবাইল মেনুতে যান অথবা <span class="method-name font-bold">bKash</span> অ্যাপে যান।</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="mt-1">•</span>
+                                    <p>"Send Money" -এ ক্লিক করুন।</p>
+                                </div>
+                                <div class="flex flex-col gap-1 pl-3">
+                                    <p>• প্রাপক নম্বর হিসেবে এই নম্বরটি লিখুন:</p>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span id="pay-admin-number" class="text-2xl font-bold text-yellow-300 tracking-wider">Loading...</span>
+                                        <button onclick="copyPayNumber()" class="bg-black/30 hover:bg-black/50 text-white px-2 py-1 rounded text-[10px] font-bold transition flex items-center gap-1 border border-white/30">
+                                            <i class="far fa-copy"></i> COPY
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="mt-1">•</span>
+                                    <p>টাকার পরিমাণ: <span id="pay-amount-text" class="font-bold text-yellow-300">100</span></p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="mt-1">•</span>
+                                    <p>নিশ্চিত করতে এখন আপনার <span class="method-name font-bold">bKash</span> মোবাইল মেনু পিন লিখুন।</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="mt-1">•</span>
+                                    <p>সবকিছু ঠিক থাকলে, আপনি <span class="method-name font-bold">bKash</span> থেকে একটি নিশ্চিতকরণ বার্তা পাবেন।</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="mt-1">•</span>
+                                    <p class="font-bold text-yellow-200">এখন উপরের বক্সে আপনার Transaction ID দিন এবং নিচের VERIFY বাটনে ক্লিক করুন।</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 max-w-md mx-auto z-50 rounded-t-xl">
+                        <button onclick="handleNewVerify()" class="w-full bg-[#b71c1c] text-white font-bold py-3 rounded shadow-lg hover:bg-red-800 transition active:scale-95 text-lg tracking-wider">
+                            VERIFY
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACCOUNT SECTION -->
+            <section id="account-sec" class="hidden animate-fade-in pb-24 bg-[#f6f8fa] min-h-screen">
+                <div class="flex flex-col items-center pt-8 pb-4">
+                    <div class="relative mb-2">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-b from-[#4DD0E1] to-[#0288D1] p-1 shadow-md">
+                            <div class="w-full h-full rounded-full bg-white p-[2px]">
+                                <div id="profile-img-container" class="w-full h-full rounded-full bg-[#00e676] overflow-hidden flex items-center justify-center">
+                                    <span id="profile-initial" class="text-4xl font-normal text-black hidden"></span>
+                                    <img id="acc-profile-img" src="" class="w-full h-full object-cover hidden">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="text-sm font-bold text-[#1976d2] mb-1">Hi, <span id="acc-profile-name">User</span></h2>
+                    <div class="flex items-center gap-1 text-black font-bold text-[11px]">
+                        <span>Available Balance : <span id="acc-profile-balance">0</span> Tk</span>
+                        <i class="fas fa-redo-alt text-[10px] cursor-pointer text-gray-800 hover:rotate-180 transition-transform"></i>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 px-4 mb-6">
+                    <div class="bg-white py-3 px-2 rounded-lg border border-[#2196F3] text-center shadow-sm">
+                        <h3 class="text-[#2196F3] font-bold text-base mb-1" id="acc-support-pin">...</h3>
+                        <p class="text-black font-bold text-[11px]">Support Pin</p>
+                    </div>
+                    <div class="bg-white py-3 px-2 rounded-lg border border-[#2196F3] text-center shadow-sm">
+                        <h3 class="text-[#2196F3] font-bold text-base mb-1"><span id="acc-weekly-spent">0</span> ৳</h3>
+                        <p class="text-black font-bold text-[11px]">Weekly Spent</p>
+                    </div>
+                    <div class="bg-white py-3 px-2 rounded-lg border border-[#2196F3] text-center shadow-sm">
+                        <h3 class="text-[#2196F3] font-bold text-base mb-1" id="acc-total-spent">0</h3>
+                        <p class="text-black font-bold text-[11px]">Total Spent</p>
+                    </div>
+                    <div class="bg-white py-3 px-2 rounded-lg border border-[#2196F3] text-center shadow-sm">
+                        <h3 class="text-[#2196F3] font-bold text-base mb-1" id="acc-total-orders">0</h3>
+                        <p class="text-black font-bold text-[11px]">Total Order</p>
+                    </div>
+                </div>
+                <div class="px-4 mb-4">
+                    <div class="bg-white shadow-sm">
+                        <div class="px-4 py-3 flex items-center gap-2">
+                            <i class="fas fa-folder-open text-black text-sm"></i>
+                            <h3 class="font-bold text-sm text-black">Account Information</h3>
+                        </div>
+                        <div class="border-t border-gray-100 p-4 space-y-4">
+                            <div class="bg-white rounded-lg border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] py-4 text-center">
+                                <div class="flex items-center justify-center gap-2 mb-1 text-gray-500">
+                                    <i class="fas fa-redo-alt text-xs"></i>
+                                    <span class="text-sm font-medium">৳<span id="acc-balance-card">0.00</span></span>
+                                </div>
+                                <p class="font-bold text-sm text-black">Available Balance</p>
+                            </div>
+                            <div class="bg-white rounded-lg border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] py-4 text-center">
+                                <div class="flex justify-center mb-2">
+                                    <div class="relative text-[#007bff]">
+                                        <i class="fas fa-certificate text-4xl"></i>
+                                        <i class="fas fa-check text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-sm"></i>
+                                    </div>
+                                </div>
+                                <p class="font-bold text-sm text-black">Account Verified!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-4 mb-6">
+                    <div class="bg-white shadow-sm">
+                        <div class="px-4 py-3 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-black text-sm"></i>
+                            <h3 class="font-bold text-sm text-black">User Information</h3>
+                        </div>
+                        <div class="border-t border-gray-100 p-4">
+                            <p class="text-[11px] font-bold text-black mb-2">email : <span id="acc-email" class="font-bold text-black">user@email.com</span></p>
+                            <p class="text-[11px] font-bold text-black">Phone : <span id="acc-phone" class="font-bold text-black">Not Available</span></p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button onclick="handleLogout()" class="w-full p-3 bg-white shadow-sm flex items-center justify-center gap-2 hover:bg-red-50 transition duration-300">
+                            <i class="fas fa-sign-out-alt text-red-500"></i>
+                            <span class="font-bold text-sm text-red-500">Log Out</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FAB -->
+        <div id="fab-container" class="fixed bottom-20 right-4 z-50">
+            <div class="flex items-center gap-2">
+                <div id="fab-help-text" class="bg-red-500 text-white text-xs font-semibold px-2 py-1.5 rounded-lg shadow-md transition-opacity duration-300">
+                    সাহায্য লাগবে ?
+                </div>
+                <div class="relative flex flex-col items-center">
+                    <div id="fab-options" class="absolute bottom-14 space-y-1.5 transition-all duration-300 ease-out transform translate-y-4 opacity-0 pointer-events-none">
+                        <a id="link-whatsapp" href="#" target="_blank" class="flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-lg hover:bg-gray-100 no-underline">
+                            <i class="fab fa-whatsapp text-xl text-[#25D366]"></i>
+                        </a>
+                        <a id="link-telegram" href="#" target="_blank" class="flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-lg hover:bg-gray-100 no-underline">
+                            <i class="fab fa-telegram-plane text-xl text-[#0088cc]"></i>
+                        </a>
+                    </div>
+                    <button id="fab-toggler" onclick="toggleFabMenu()" class="relative w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white text-xl shadow-xl transition-all duration-300 ease-in-out hover:bg-red-600 focus:outline-none">
+                        <i id="fab-icon-open" class="fas fa-phone-alt transition-all duration-300 transform"></i>
+                        <i id="fab-icon-close" class="fas fa-times absolute transition-all duration-300 transform scale-0 opacity-0 -rotate-180"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <nav class="fixed bottom-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-100/50 py-3 px-6 shadow-[0_-5px_20px_rgba(0,0,0,0.03)] z-40 max-w-md mx-auto left-0 right-0 rounded-t-[20px]">
+            <div class="flex justify-between items-center">
+                <button onclick="showSec('home')" class="nav-item flex flex-col items-center gap-1.5 text-gray-700 transition-all duration-300 hover:text-sky-500 active-tab group" id="nav-home">
+                    <img src="https://img.icons8.com/?size=100&id=OXVih02dFZ53&format=png&color=000000" class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" alt="Home">
+                    <span class="text-[10px] font-semibold tracking-wide">Home</span>
+                </button>
+                <button onclick="showSec('tutorial')" class="nav-item flex flex-col items-center gap-1.5 text-gray-700 transition-all duration-300 hover:text-sky-500 group" id="nav-tutorial">
+                    <img src="https://img.icons8.com/?size=100&id=15979&format=png&color=000000" class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" alt="Tutorial">
+                    <span class="text-[10px] font-semibold tracking-wide">Tutorial</span>
+                </button>
+                <button onclick="showSec('addmoney')" class="nav-item flex flex-col items-center gap-1.5 text-gray-700 transition-all duration-300 hover:text-sky-500 group" id="nav-addmoney">
+                    <img src="https://img.icons8.com/?size=100&id=95782&format=png&color=000000" class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" alt="Add Money">
+                    <span class="text-[10px] font-semibold tracking-wide">Add Money</span>
+                </button>
+                <button onclick="showSec('history')" class="nav-item flex flex-col items-center gap-1.5 text-gray-700 transition-all duration-300 hover:text-sky-500 group" id="nav-history">
+                    <img src="https://img.icons8.com/?size=100&id=41117&format=png&color=000000" class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" alt="History">
+                    <span class="text-[10px] font-semibold tracking-wide">History</span>
+                </button>
+                <button onclick="showSec('account')" class="nav-item flex flex-col items-center gap-1.5 text-gray-700 transition-all duration-300 hover:text-sky-500 group" id="nav-account">
+                    <img src="https://img.icons8.com/?size=100&id=7820&format=png&color=000000" class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" alt="Account">
+                    <span class="text-[10px] font-semibold tracking-wide">Account</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================================ -->
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyD1FMki03jKU1EQITCw9yLAOU8M7vs42BE",
+            authDomain: "ishan-top-971e0.firebaseapp.com",
+            databaseURL: "https://ishan-top-971e0-default-rtdb.firebaseio.com",
+            projectId: "ishan-top-971e0",
+            storageBucket: "ishan-top-971e0.firebasestorage.app",
+            messagingSenderId: "976493439767",
+            appId: "1:976493439767:web:e6c0ffa496e713aef7a552",
+            measurementId: "G-MS1R6CM030"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const rtdb = firebase.database();
+
+        let currentUser = null;
+        let userBalance = 0;
+        let selectedProduct = null;
+        let selectedGameId = null;
+        let selectedGameName = "";
+        let selectedGameType = 'uid';
+        let gamesData = {};
+        let isAutoPayEnabled = true;
+        let selectedPaymentMethod = 'wallet';
+        let isDirectBuy = false;
+        let pendingDirectOrder = null;
+        let currentDepositAmount = 0;
+        let currentPaymentMethod = '';
+        let howToVideoId = "dQw4w9WgXcQ";
+
+        // ============================================================
+        // LOAD FUNCTIONS
+        // ============================================================
+        function loadGlobalSettings() {
+            db.collection("settings").doc("general").onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    const logoUrl = data.logoUrl || "https://placehold.co/150x50?text=No+Logo";
+                    const siteName = data.siteName || "IASAN TOPUO";
+                    isAutoPayEnabled = data.autoPayEnabled === true;
+                    document.getElementById('header-logo-img').src = logoUrl;
+                    document.getElementById('about-logo-img').src = logoUrl;
+                    document.getElementById('step2-logo').src = logoUrl;
+                    document.getElementById('step2-center-logo').src = logoUrl;
+                    document.getElementById('pay-site-logo-small').src = logoUrl;
+                    document.title = siteName;
+                }
+            });
+        }
+
+        function loadHowToVideo() {
+            db.collection("settings").doc("videos").get().then((doc) => {
+                if (doc.exists && doc.data().howToAddMoney) {
+                    howToVideoId = doc.data().howToAddMoney;
+                    document.getElementById("new-tutorial-video").src = `https://www.youtube.com/embed/${howToVideoId}`;
+                }
+            });
+        }
+
+        function loadAppContent() {
+            db.collection("settings").doc("general").onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.notice) document.getElementById('notice-text').innerText = data.notice;
+                    const waNum = data.whatsapp ? String(data.whatsapp).replace(/\s/g, '') : "0";
+                    const tgLink = data.telegram || "#";
+                    const appLink = data.appLink || "#";
+                    const fbLink = data.facebook || "#";
+                    const ytLink = data.youtube || "#";
+                    const waLink = `https://wa.me/${waNum}`;
+
+                    document.getElementById('home-whatsapp').href = waLink;
+                    document.getElementById('home-telegram').href = tgLink;
+                    document.getElementById('home-app-dl').href = appLink;
+                    document.getElementById('link-whatsapp').href = waLink;
+                    document.getElementById('link-telegram').href = tgLink;
+                    document.getElementById('about-facebook').href = fbLink;
+                    document.getElementById('about-youtube').href = ytLink;
+                    document.getElementById('about-telegram').href = tgLink;
+                    document.getElementById('about-whatsapp').href = waLink;
+                    document.getElementById('contact-whatsapp').href = waLink;
+                    document.getElementById('contact-telegram').href = tgLink;
+                    document.getElementById('contact-facebook').href = fbLink;
+                }
+            });
+            loadGamesAndCategories();
+            loadTutorials();
+            loadBanners();
+            loadRecentOrdersGlobal();
+        }
+
+        // ============================================================
+        // GAMES & CATEGORIES
+        // ============================================================
+        async function loadGamesAndCategories() {
+            const listContainer = document.getElementById('services-list');
+            listContainer.innerHTML = `<div class="text-center py-10"><i class="fas fa-spinner fa-spin text-sky-500"></i> Loading Games...</div>`;
+            gamesData = {};
+
+            try {
+                const [categoriesSnap, servicesSnap] = await Promise.all([
+                    db.collection("categories").orderBy("slot").get(),
+                    db.collection("services").get()
+                ]);
+
+                if (servicesSnap.empty) {
+                    listContainer.innerHTML = `<div class="col-span-3 text-center text-gray-700">No Games Found</div>`;
+                    return;
+                }
+
+                const categoriesMap = new Map();
+                categoriesSnap.forEach(doc => {
+                    categoriesMap.set(doc.id, { ...doc.data(), games: [] });
+                });
+
+                let uncategorizedGames = [];
+
+                servicesSnap.forEach(doc => {
+                    const game = { id: doc.id, ...doc.data() };
+                    gamesData[doc.id] = game;
+                    if (game.categoryId && categoriesMap.has(game.categoryId)) {
+                        categoriesMap.get(game.categoryId).games.push(game);
+                    } else {
+                        uncategorizedGames.push(game);
+                    }
+                });
+
+                listContainer.innerHTML = "";
+
+                categoriesMap.forEach((category) => {
+                    if (category.games.length > 0) {
+                        let gamesHTML = '';
+                        category.games.forEach(item => {
+                            gamesHTML += `
+                                <div onclick="openTopUpPage('${item.id}', '${item.name}', '${item.image}')" 
+                                     class="bg-white rounded-lg shadow-[0_2px_0px_0px_rgba(3,169,244,0.5)] overflow-hidden cursor-pointer transform hover:-translate-y-1 transition-all duration-300 border border-gray-100 group">
+                                    <div class="w-full aspect-square bg-gray-50 overflow-hidden relative">
+                                        <img src="${item.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://placehold.co/200'">
+                                    </div>
+                                    <div class="p-2 text-center bg-white border-t border-gray-50">
+                                        <p class="text-xs font-bold text-gray-700 line-clamp-2 leading-tight lang-auto">${item.name}</p>
+                                    </div>
+                                </div>`;
+                        });
+                        listContainer.innerHTML += `
+                            <div>
+                                <h3 class="font-bold text-gray-700 text-xl mb-3 text-center lang-auto" style="letter-spacing: 0.5px">${category.name}</h3>
+                                <div class="grid grid-cols-3 gap-6 px-4">${gamesHTML}</div>
+                            </div>`;
+                    }
+                });
+
+                if (uncategorizedGames.length > 0) {
+                    let gamesHTML = '';
+                    uncategorizedGames.forEach(item => {
+                        gamesHTML += `
+                            <div onclick="openTopUpPage('${item.id}', '${item.name}', '${item.image}')" 
+                                 class="bg-white rounded-lg shadow-[0_2px_0px_0px_rgba(3,169,244,0.5)] overflow-hidden cursor-pointer transform hover:-translate-y-1 transition-all duration-300 border border-gray-100 group">
+                                <div class="w-full aspect-square bg-gray-50 overflow-hidden relative">
+                                    <img src="${item.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://placehold.co/200'">
+                                </div>
+                                <div class="p-1 text-center bg-white border-t border-gray-50">
+                                    <p class="text-[8px] font-bold text-gray-700 truncate">${item.name}</p>
+                                </div>
+                            </div>`;
+                    });
+                    listContainer.innerHTML += `
+                        <div>
+                            <h3 class="font-bold text-gray-500 text-lg border-l-4 border-gray-400 pl-2 mb-3">Others</h3>
+                            <div class="grid grid-cols-3 gap-6 px-4">${gamesHTML}</div>
+                        </div>`;
+                }
+            } catch (error) {
+                console.error("Failed to load games:", error);
+                listContainer.innerHTML = `<div class="text-center text-red-500">Failed to load games. Please try again later.</div>`;
+            }
+        }
+
+        // ============================================================
+        // TUTORIALS
+        // ============================================================
+        function loadTutorials() {
+            db.collection("tutorials").onSnapshot((snapshot) => {
+                const container = document.getElementById('tutorial-list-container');
+                container.innerHTML = "";
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-video text-gray-700 text-2xl"></i>
+                            </div>
+                            <p class="text-gray-500 text-sm">No tutorials available yet</p>
+                        </div>`;
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    container.innerHTML += `
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 group">
+                            <div class="relative" onclick="window.open('${data.link}', '_blank')">
+                                <div class="aspect-video bg-gray-100 overflow-hidden">
+                                    <img src="${data.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                </div>
+                                <div class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div class="bg-white/90 backdrop-blur-sm rounded-full w-14 h-14 flex items-center justify-center shadow-lg">
+                                        <i class="fas fa-play text-sky-600 text-xl ml-1"></i>
+                                    </div>
+                                </div>
+                                <div class="absolute top-3 right-3 bg-black/60 text-white px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm">
+                                    <i class="fas fa-play mr-1"></i> Tutorial
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-gray-800 text-sm leading-tight line-clamp-2">${data.title}</h3>
+                                <div class="mt-3 flex items-center justify-between">
+                                    <span class="text-xs text-gray-500"><i class="fas fa-clock mr-1"></i> Watch now</span>
+                                    <button onclick="window.open('${data.link}', '_blank')" class="bg-sky-50 text-sky-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-sky-100 transition-colors">
+                                        <i class="fas fa-external-link-alt mr-1"></i> Watch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        // ============================================================
+        // BANNERS
+        // ============================================================
+        function loadBanners() {
+            db.collection("banners").onSnapshot((snapshot) => {
+                const wrapper = document.getElementById('slider-wrapper');
+                let slidesHTML = "";
+                snapshot.forEach((doc) => {
+                    if (doc.data().image) slidesHTML += `<img src="${doc.data().image}" class="w-full h-full object-cover flex-shrink-0">`;
+                });
+                if (slidesHTML) {
+                    wrapper.innerHTML = slidesHTML;
+                    startSlider();
+                }
+            });
+        }
+
+        let sliderInterval;
+
+        function startSlider() {
+            clearInterval(sliderInterval);
+            let idx = 0;
+            const wrapper = document.getElementById('slider-wrapper');
+            const count = wrapper.children.length;
+            if (count <= 1) return;
+            sliderInterval = setInterval(() => {
+                idx = (idx + 1) % count;
+                wrapper.style.transform = `translateX(-${idx * 100}%)`;
+            }, 3000);
+        }
+
+        // ============================================================
+        // RECENT ORDERS
+        // ============================================================
+        function loadRecentOrdersGlobal() {
+            const container = document.getElementById('latest-orders-list');
+            db.collection('orders').orderBy('date', 'desc').limit(5)
+                .onSnapshot((snapshot) => {
+                    if (snapshot.empty) {
+                        container.innerHTML = '<div class="text-center text-gray-700 text-xs py-2">No recent orders</div>';
+                        return;
+                    }
+                    container.innerHTML = "";
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        let displayName = "Customer";
+                        if (data.userName) {
+                            displayName = data.userName.includes('@') ? data.userName.split('@')[0] : data.userName;
+                        }
+                        const firstChar = displayName.charAt(0).toUpperCase();
+                        let statusText = (data.status || 'pending').toLowerCase();
+                        let statusBadgeClass = 'bg-red-500 text-white';
+                        if (['success', 'complete', 'completed'].includes(statusText)) {
+                            statusBadgeClass = 'bg-[#198754] text-white';
+                            statusText = 'completed';
+                        } else if (['pending', 'processing'].includes(statusText)) {
+                            statusBadgeClass = 'bg-[#ffc107] text-gray-800';
+                            statusText = 'processing';
+                        }
+                        container.innerHTML += `
+                            <div class="bg-white p-3 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center justify-between">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <div class="w-11 h-11 min-w-[44px] bg-[#0d6efd] rounded-full flex items-center justify-center text-white text-lg font-sans font-medium shadow-sm">${firstChar}</div>
+                                    <div class="flex flex-col truncate">
+                                        <span class="text-gray-600 font-bold text-sm truncate">${displayName}</span>
+                                        <span class="text-gray-500 text-[11px] font-medium truncate">${data.productName} - ${data.price} ৳</span>
+                                    </div>
+                                </div>
+                                <div class="${statusBadgeClass} px-3 py-1 rounded-full text-[10px] font-bold capitalize shadow-sm whitespace-nowrap ml-2">${statusText}</div>
+                            </div>`;
+                    });
+                });
+        }
+
+        // ============================================================
+        // AUTH
+        // ============================================================
+        function toggleAuth(view) {
+            if (view === 'login') {
+                document.getElementById('login-view').classList.remove('hidden');
+                document.getElementById('register-view').classList.add('hidden');
+            } else {
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('register-view').classList.remove('hidden');
+            }
+        }
+
+        function handleRegister() {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            if (!name || !email || !pass) return Swal.fire('Error', 'Please fill all fields', 'error');
+            Swal.showLoading();
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then((cred) => db.collection('users').doc(cred.user.uid).set({
+                    name: name,
+                    email: email,
+                    balance: 0,
+                    createdAt: new Date()
+                }))
+                .then(() => {
+                    Swal.fire('Success', 'Account Created!', 'success');
+                    showSec('home');
+                })
+                .catch((err) => Swal.fire('Error', err.message, 'error'));
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            if (!email || !pass) return;
+            Swal.showLoading();
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    showSec('home');
+                    Swal.close();
+                })
+                .catch((err) => Swal.fire('Login Failed', err.message, 'error'));
+        }
+
+        function handleGoogleLogin() {
+            var provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).then((result) => {
+                const user = result.user;
+                const userRef = db.collection('users').doc(user.uid);
+                userRef.get().then((docSnapshot) => {
+                    if (!docSnapshot.exists) {
+                        userRef.set({
+                            name: user.displayName,
+                            email: user.email,
+                            balance: 0,
+                            createdAt: new Date(),
+                            photoURL: user.photoURL
+                        });
+                    }
+                });
+                showSec('home');
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Logged in successfully',
+                    showConfirmButton: true,
+                    timer: 1500
+                });
+            }).catch((error) => {
+                Swal.fire('Error', error.message, 'error');
+            });
+        }
+
+        function showAuthPage() {
+            showSec('auth');
+        }
+
+        function handleLogout() {
+            auth.signOut().then(() => {
+                showSec('home');
+            });
+        }
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                if (!document.getElementById('auth-sec').classList.contains('hidden')) {
+                    showSec('home');
+                }
+                document.getElementById('header-login-container').classList.add('hidden');
+                document.getElementById('header-balance-container').classList.remove('hidden');
+                loadUserData(user.uid);
+                calculateUserStats(user.uid);
+            } else {
+                currentUser = null;
+                document.getElementById('header-login-container').classList.remove('hidden');
+                document.getElementById('header-balance-container').classList.add('hidden');
+            }
+        });
+
+        function loadUserData(uid) {
+            db.collection('users').doc(uid).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    userBalance = data.balance || 0;
+                    const userName = data.name || "User";
+                    const userEmail = data.email || "";
+
+                    document.getElementById('header-balance').innerText = userBalance;
+                    document.getElementById('topup-balance-display').innerText = userBalance.toFixed(2);
+
+                    const imgContainer = document.getElementById('acc-profile-img');
+                    const initialContainer = document.getElementById('profile-initial');
+
+                    if (data.photoURL) {
+                        imgContainer.src = data.photoURL;
+                        imgContainer.classList.remove('hidden');
+                        initialContainer.classList.add('hidden');
+                    } else {
+                        imgContainer.classList.add('hidden');
+                        initialContainer.classList.remove('hidden');
+                        initialContainer.innerText = userName.charAt(0).toUpperCase();
+                    }
+
+                    document.getElementById('acc-profile-name').innerText = userName;
+                    document.getElementById('acc-email').innerText = userEmail;
+                    document.getElementById('acc-profile-balance').innerText = userBalance;
+                    document.getElementById('acc-balance-card').innerText = userBalance.toFixed(2);
+                    document.getElementById('acc-support-pin').innerText = uid.substring(0, 6).toUpperCase();
+                }
+            });
+        }
+
+        function calculateUserStats(uid) {
+            db.collection('orders').where('userId', '==', uid).get().then((snapshot) => {
+                let totalOrders = 0;
+                let totalSpent = 0;
+                let weeklySpent = 0;
+                const now = new Date();
+                const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    totalOrders++;
+                    const status = data.status ? data.status.toLowerCase() : '';
+                    if (status === 'success' || status === 'complete' || status === 'completed' || status ===
+                        'pending') {
+                        const price = parseInt(data.price || 0);
+                        totalSpent += price;
+                        if (data.date) {
+                            const orderDate = data.date.toDate ? data.date.toDate() : new Date(data.date);
+                            if (orderDate >= oneWeekAgo) {
+                                weeklySpent += price;
+                            }
+                        }
+                    }
+                });
+
+                document.getElementById('acc-total-orders').innerText = totalOrders;
+                document.getElementById('acc-total-spent').innerText = totalSpent;
+                document.getElementById('acc-weekly-spent').innerText = weeklySpent;
+            });
+        }
+
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        function showSec(secId) {
+            if ((secId === 'history' || secId === 'account' || secId === 'addmoney') && !currentUser) {
+                showSec('auth');
+                return;
+            }
+
+            document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-tab'));
+            document.getElementById(secId + '-sec').classList.remove('hidden');
+            const navBtn = document.getElementById('nav-' + secId);
+            if (navBtn) navBtn.classList.add('active-tab');
+
+            const noticeSection = document.getElementById('notice-section');
+            if (secId === 'home') {
+                noticeSection.classList.remove('hidden');
+            } else {
+                noticeSection.classList.add('hidden');
+            }
+
+            if (secId === 'addmoney') {
+                document.getElementById('am-step-1').classList.remove('hidden');
+                document.getElementById('am-step-2').classList.add('hidden');
+                document.getElementById('am-step-3').classList.add('hidden');
+                isDirectBuy = false;
+            }
+            if (secId === 'history') {
+                loadHistory();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        function loadHistory() {
+            const list = document.getElementById('history-list');
+            if (!currentUser) return;
+            list.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin text-sky-500"></i> Loading History...</div>';
+
+            db.collection('orders').where('userId', '==', currentUser.uid).limit(50).get()
+                .then(snapshot => {
+                    if (snapshot.empty) {
+                        list.innerHTML = `<div class="text-center py-8 text-gray-500"><p>No orders found</p></div>`;
+                        return;
+                    }
+                    const orders = [];
+                    snapshot.forEach(doc => orders.push(doc.data()));
+                    orders.sort((a, b) => {
+                        const dateA = a.date ? a.date.toDate() : new Date(0);
+                        const dateB = b.date ? b.date.toDate() : new Date(0);
+                        return dateB - dateA;
+                    });
+
+                    list.innerHTML = "";
+                    orders.forEach(d => {
+                        let statusColor = "bg-yellow-100 text-yellow-700 border-yellow-500";
+                        let icon = "fa-clock";
+                        const status = d.status ? d.status.toLowerCase() : 'pending';
+                        if (status === 'success' || status === 'complete' || status === 'completed') {
+                            statusColor = "bg-green-100 text-green-700 border-green-500";
+                            icon = "fa-check-circle";
+                        } else if (status === 'cancel' || status === 'rejected') {
+                            statusColor = "bg-red-100 text-red-700 border-red-500";
+                            icon = "fa-times-circle";
+                        }
+
+                        let dateStr = "N/A";
+                        if (d.date && d.date.toDate) {
+                            dateStr = d.date.toDate().toLocaleString('en-US', { month: 'short', day: 'numeric',
+                                hour: 'numeric', minute: 'numeric', hour12: true });
+                        }
+
+                        let detailsInfo = d.redeemCode ? `
+                            <div class="mt-2 bg-green-50 border border-green-200 rounded p-2 text-center">
+                                <p class="text-[10px] text-green-600 font-bold uppercase">Your Voucher Code</p>
+                                <p class="text-sm font-mono font-bold text-gray-800 select-all tracking-wider break-all">${d.redeemCode}</p>
+                            </div>` : `
+                            <div class="mt-1 inline-block bg-gray-50 border border-gray-200 rounded px-2 py-0.5">
+                                <p class="text-[10px] text-gray-500 font-mono">ID: <span class="text-gray-700 font-bold select-all">${d.playerId}</span></p>
+                            </div>`;
+
+                        list.innerHTML += `
+                            <div class="bg-white border border-gray-200 rounded-lg mb-3">
+                                <div class="p-3">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h4 class="font-bold text-gray-800 text-sm">${d.gameName}</h4>
+                                            <p class="text-xs text-gray-500">${dateStr}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-lg font-bold text-sky-600">৳${d.price}</p>
+                                            <span class="text-xs font-medium ${statusColor.includes('green') ? 'text-green-600' : statusColor.includes('red') ? 'text-red-600' : 'text-yellow-600'}">${d.status}</span>
+                                        </div>
+                                    </div>
+                                    <div class="border-t border-gray-100 pt-2 mt-2">
+                                        <p class="text-xs font-medium text-gray-700 mb-1">${d.productName}</p>
+                                        ${detailsInfo}
+                                    </div>
+                                </div>
+                            </div>`;
+                    });
+                })
+                .catch(error => {
+                    list.innerHTML =
+                        `<div class="text-center text-red-500 py-4 text-xs font-mono">Error: ${error.message}</div>`;
+                });
+        }
+
+        // ============================================================
+        // TOPUP SYSTEM
+        // ============================================================
+        function openTopUpPage(gameId, gameName, gameImg) {
+            selectedGameId = gameId;
+            selectedGameName = gameName;
+            selectedProduct = null;
+            selectedGameType = gamesData[gameId]?.type || 'uid';
+
+            selectPaymentOption('wallet');
+            isDirectBuy = false;
+            document.getElementById('related-products-section').classList.add('hidden');
+
+            document.getElementById('total-price').innerText = "0";
+            document.getElementById('game-player-id').value = "";
+            document.getElementById('topup-game-title').innerText = gameName;
+            document.getElementById('topup-game-img').src = gameImg;
+
+            const playerSection = document.getElementById('player-id-section');
+            playerSection.classList.toggle('hidden', selectedGameType === 'code');
+
+            if (selectedGameType === 'code') {
+                document.getElementById('topup-sub-title').innerText = gameName + " (Instant Voucher)";
+            } else if (selectedGameType === 'auto-topup') {
+                document.getElementById('topup-sub-title').innerText = gameName + " (Auto Delivery)";
+            } else {
+                document.getElementById('topup-sub-title').innerText = gameName + " (Player ID)";
+            }
+
+            // Rules
+            const rulesBox = document.getElementById('game-rules-box');
+            const rulesText = document.getElementById('game-rules-text');
+            if (gamesData[gameId] && gamesData[gameId].rules) {
+                const rules = gamesData[gameId].rules.split('\n');
+                let rulesHtml = "";
+                rules.forEach(rule => {
+                    if (rule.trim()) rulesHtml +=
+                        `<p class="flex items-start gap-1"><i class="far fa-dot-circle mt-1 text-[8px] text-gray-400"></i> ${rule}</p>`;
+                });
+                rulesText.innerHTML = rulesHtml || gamesData[gameId].rules;
+                rulesBox.classList.remove('hidden');
+            } else {
+                rulesBox.classList.add('hidden');
+            }
+
+            showSec('topup');
+
+            const grid = document.getElementById('products-grid');
+            const loader = document.getElementById('product-loader');
+            grid.innerHTML = "";
+            loader.classList.remove('hidden');
+
+            db.collection('services').doc(gameId).collection('products').orderBy('price', 'asc').get()
+                .then((snapshot) => {
+                    loader.classList.add('hidden');
+                    if (snapshot.empty) {
+                        grid.innerHTML =
+                            `<div class="col-span-2 text-center text-gray-700 py-4">No packages available</div>`;
+                        return;
+                    }
+                    snapshot.forEach(doc => {
+                        const prod = doc.data();
+                        const card = document.createElement('div');
+                        card.className = "product-card";
+                        card.dataset.productId = doc.id;
+                        card.dataset.productName = prod.name;
+                        card.dataset.productPrice = prod.price;
+                        card.onclick = () => selectProduct(card, prod.name, prod.price, doc.id);
+
+                        let stockBadge = "";
+                        if (selectedGameType === 'code' || selectedGameType === 'auto-topup') {
+                            const count = prod.stockCount || 0;
+                            stockBadge = (count > 0) ? `` :
+                                `<span class="text-[9px] text-red-500 bg-red-100 px-1 rounded ml-1">Stock Out</span>`;
+                        }
+
+                        card.innerHTML = `
+                            <div class="flex items-center">
+                                <div class="product-bullet"></div>
+                                <div>
+                                    <span class="text-xs font-bold text-gray-600 block">${prod.name} ${stockBadge}</span>
+                                </div>
+                            </div>
+                            <span class="text-sky-600 font-bold text-sm">৳${prod.price}</span>`;
+                        grid.appendChild(card);
+                    });
+                });
+        }
+
+        function selectProduct(element, name, price, id) {
+            document.querySelectorAll('.product-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedProduct = { id: id, name: name, price: parseInt(price) };
+            document.getElementById('total-price').innerText = selectedProduct.price;
+            loadRelatedProducts(selectedGameId, selectedProduct.id);
+        }
+
+        function loadRelatedProducts(gameId, currentProductId) {
+            const section = document.getElementById('related-products-section');
+            const grid = document.getElementById('related-products-grid');
+
+            db.collection('services').doc(gameId).collection('products')
+                .where('price', '>=', selectedProduct.price - 50)
+                .where('price', '<=', selectedProduct.price + 50)
+                .limit(4)
+                .get()
+                .then((snapshot) => {
+                    if (snapshot.empty || snapshot.size <= 1) {
+                        section.classList.add('hidden');
+                        return;
+                    }
+                    section.classList.remove('hidden');
+                    grid.innerHTML = '';
+                    let count = 0;
+                    snapshot.forEach(doc => {
+                        const prod = doc.data();
+                        if (doc.id !== currentProductId && count < 3) {
+                            count++;
+                            const card = document.createElement('div');
+                            card.className = "product-card";
+                            card.onclick = () => {
+                                selectProduct(card, prod.name, prod.price, doc.id);
+                                document.querySelectorAll('#products-grid .product-card').forEach(el => el
+                                    .classList.remove('selected'));
+                                document.querySelectorAll('#products-grid .product-card').forEach(el => {
+                                    if (el.dataset.productId === doc.id) {
+                                        el.classList.add('selected');
+                                    }
+                                });
+                                selectedProduct = { id: doc.id, name: prod.name, price: parseInt(prod
+                                    .price) };
+                                document.getElementById('total-price').innerText = selectedProduct.price;
+                            };
+                            card.innerHTML = `
+                                <div class="flex items-center">
+                                    <div class="product-bullet"></div>
+                                    <div>
+                                        <span class="text-xs font-bold text-gray-600 block">${prod.name}</span>
+                                    </div>
+                                </div>
+                                <span class="text-sky-600 font-bold text-sm">৳${prod.price}</span>`;
+                            grid.appendChild(card);
+                        }
+                    });
+                    if (count === 0) {
+                        section.classList.add('hidden');
+                    }
+                })
+                .catch(() => {
+                    section.classList.add('hidden');
+                });
+        }
+
+        function selectPaymentOption(option) {
+            selectedPaymentMethod = option;
+            document.querySelectorAll('.pay-option-card').forEach(el => el.classList.remove('selected'));
+            document.getElementById('opt-' + option).classList.add('selected');
+        }
+
+        function processOrder() {
+            if (!currentUser) {
+                Swal.fire({
+                    title: 'Login Required',
+                    text: 'Please login to purchase this item',
+                    icon: 'info',
+                    confirmButtonText: 'Login',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        showSec('auth');
+                    }
+                });
+                return;
+            }
+
+            let playerId = "N/A";
+            if (selectedGameType === 'uid' || selectedGameType === 'auto-topup') {
+                playerId = document.getElementById('game-player-id').value.trim();
+                if (!playerId) return Swal.fire({ icon: 'warning', title: 'Missing ID', text: 'Please enter Player ID!' });
+            } else {
+                playerId = "Voucher Request";
+            }
+
+            if (!selectedProduct) return Swal.fire({ icon: 'warning', title: 'Select Pack',
+                text: 'Please select a recharge package!' });
+
+            if (selectedPaymentMethod === 'instant') {
+                isDirectBuy = true;
+                currentDepositAmount = selectedProduct.price;
+                pendingDirectOrder = {
+                    playerId: playerId,
+                    product: selectedProduct,
+                    gameId: selectedGameId,
+                    gameName: selectedGameName,
+                    gameType: selectedGameType
+                };
+                document.getElementById('topup-sec').classList.add('hidden');
+                document.getElementById('addmoney-sec').classList.remove('hidden');
+                document.getElementById('am-step-1').classList.add('hidden');
+                document.getElementById('am-step-2').classList.remove('hidden');
+                document.getElementById('am-step-3').classList.add('hidden');
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                return;
+            }
+
+            // Wallet Pay
+            if (userBalance < selectedProduct.price) return Swal.fire({ icon: 'error', title: 'Low Balance',
+                text: 'Please Add Money first.' });
+
+            Swal.fire({
+                title: 'Confirm Purchase?',
+                html: `Item: ${selectedProduct.name}<br>Price: ৳${selectedProduct.price}`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#03a9f4',
+                confirmButtonText: 'Yes, Buy Now'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading();
+                    if (selectedGameType === 'code') {
+                        processVoucherOrder(playerId);
+                    } else if (selectedGameType === 'auto-topup') {
+                        processAutoTopUpOrder(playerId);
+                    } else {
+                        processUidOrder(playerId);
+                    }
+                }
+            });
+        }
+
+        async function processVoucherOrder(playerId) {
+            const stockRef = db.collection('services').doc(selectedGameId).collection('products').doc(selectedProduct.id)
+                .collection('stock');
+            const availableStockSnap = await stockRef.where('status', '==', 'available').limit(1).get();
+
+            if (availableStockSnap.empty) {
+                return Swal.fire('Out of Stock', 'Sorry, this product is currently unavailable.', 'error');
+            }
+
+            const stockDoc = availableStockSnap.docs[0];
+            const voucherCode = stockDoc.data().code;
+            const userRef = db.collection('users').doc(currentUser.uid);
+
+            try {
+                await db.runTransaction(async (t) => {
+                    const uDoc = await t.get(userRef);
+                    const newBal = uDoc.data().balance - selectedProduct.price;
+                    if (newBal < 0) throw new Error("Insufficient Balance");
+                    t.update(userRef, { balance: newBal });
+                    t.delete(stockDoc.ref);
+                    t.update(db.collection('services').doc(selectedGameId).collection('products').doc(selectedProduct
+                    .id), {
+                        stockCount: firebase.firestore.FieldValue.increment(-1)
+                    });
+                });
+
+                await db.collection('orders').add({
+                    userId: currentUser.uid,
+                    userName: currentUser.email,
+                    gameName: selectedGameName,
+                    gameId: selectedGameId,
+                    productName: selectedProduct.name,
+                    price: selectedProduct.price,
+                    playerId: playerId,
+                    type: 'code',
+                    status: 'success',
+                    redeemCode: voucherCode,
+                    date: new Date()
+                });
+
+                Swal.fire('Success', 'Voucher Purchased! Check History for Code.', 'success');
+                showSec('home');
+            } catch (e) {
+                Swal.fire('Error', 'Transaction Failed: ' + e.message, 'error');
+            }
+        }
+
+        function processUidOrder(playerId) {
+            const newBalance = userBalance - selectedProduct.price;
+            db.collection('users').doc(currentUser.uid).update({ balance: newBalance })
+                .then(() => {
+                    return db.collection('orders').add({
+                        userId: currentUser.uid,
+                        userName: currentUser.email,
+                        gameName: selectedGameName,
+                        gameId: selectedGameId,
+                        playerId: playerId,
+                        productName: selectedProduct.name,
+                        price: selectedProduct.price,
+                        type: 'uid',
+                        status: 'pending',
+                        date: new Date()
+                    });
+                })
+                .then(() => {
+                    Swal.fire('Success', 'Order Placed Successfully!', 'success');
+                    showSec('home');
+                })
+                .catch(err => Swal.fire('Error', err.message, 'error'));
+        }
+
+        async function processAutoTopUpOrder(playerId) {
+            const settingsDoc = await db.collection("settings").doc("general").get();
+            if (!settingsDoc.exists) {
+                return Swal.fire('Configuration Error', 'Admin settings not found. Please contact support.', 'error');
+            }
+            const settings = settingsDoc.data();
+            const apiKey = settings.autoTopUpApiKey;
+            const apiUrl = settings.autoTopUpApiUrl;
+            const callbackUrl = settings.autoTopUpCallbackUrl;
+
+            if (!apiKey || !apiUrl || !callbackUrl) {
+                return Swal.fire('Configuration Error', 'Auto TopUp is not configured correctly. Please contact support.',
+                    'error');
+            }
+
+            const stockRef = db.collection('services').doc(selectedGameId).collection('products').doc(selectedProduct.id)
+                .collection('stock');
+            const availableStockSnap = await stockRef.where('status', '==', 'available').limit(1).get();
+
+            if (availableStockSnap.empty) {
+                return Swal.fire('Out of Stock', 'Sorry, this product is currently unavailable.', 'error');
+            }
+            const stockDoc = availableStockSnap.docs[0];
+            const uniPinCode = stockDoc.data().code;
+
+            const userRef = db.collection('users').doc(currentUser.uid);
+            const orderRef = db.collection('orders').doc();
+
+            try {
+                await db.runTransaction(async (t) => {
+                    const userDoc = await t.get(userRef);
+                    const newBalance = userDoc.data().balance - selectedProduct.price;
+                    if (newBalance < 0) throw new Error("Insufficient Balance");
+                    t.update(userRef, { balance: newBalance });
+                    t.delete(stockDoc.ref);
+                    t.update(db.collection('services').doc(selectedGameId).collection('products').doc(selectedProduct
+                    .id), {
+                        stockCount: firebase.firestore.FieldValue.increment(-1)
+                    });
+                    t.set(orderRef, {
+                        userId: currentUser.uid,
+                        userName: currentUser.email,
+                        gameName: selectedGameName,
+                        gameId: selectedGameId,
+                        playerId: playerId,
+                        productName: selectedProduct.name,
+                        price: selectedProduct.price,
+                        type: 'auto-topup',
+                        status: 'pending',
+                        date: new Date(),
+                        usedUniPinCode: uniPinCode
+                    });
+                });
+
+                const payload = {
+                    api: apiKey,
+                    playerid: playerId,
+                    code: uniPinCode,
+                    orderid: orderRef.id,
+                    url: callbackUrl
+                };
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).catch(err => console.error("Auto TopUp API Error:", err));
+
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Processing Order',
+                    text: 'Your top-up is being processed automatically. Please wait.',
+                    timer: 7000,
+                    timerProgressBar: true,
+                    didOpen: () => { Swal.showLoading() }
+                });
+
+                setTimeout(() => {
+                    orderRef.update({ status: 'success' }).then(() => {
+                        Swal.fire('Success!', 'Your Top-Up has been completed successfully.', 'success');
+                        showSec('home');
+                    });
+                }, 7000);
+            } catch (e) {
+                Swal.fire('Transaction Failed', e.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // ADD MONEY SYSTEM
+        // ============================================================
+        function goToMethodStep() {
+            const inputVal = document.getElementById('new-amount-input').value;
+            if (!inputVal || inputVal < 10) {
+                return Swal.fire('Error', 'Please enter a valid amount (Min 10 Tk)', 'error');
+            }
+            currentDepositAmount = parseInt(inputVal);
+            document.getElementById('am-step-1').classList.add('hidden');
+            document.getElementById('am-step-2').classList.remove('hidden');
+        }
+
+        function backToAmountStep() {
+            if (isDirectBuy) {
+                document.getElementById('am-step-2').classList.add('hidden');
+                document.getElementById('addmoney-sec').classList.add('hidden');
+                document.getElementById('topup-sec').classList.remove('hidden');
+                isDirectBuy = false;
+            } else {
+                document.getElementById('am-step-2').classList.add('hidden');
+                document.getElementById('am-step-1').classList.remove('hidden');
+            }
+        }
+
+        function goToPaymentPage(method, themeClass, logoUrl) {
+            currentPaymentMethod = method;
+            document.getElementById('pay-method-logo').src = logoUrl;
+            document.getElementById('pay-amount-display').innerText = currentDepositAmount;
+            document.getElementById('pay-amount-text').innerText = currentDepositAmount;
+            document.querySelectorAll('.method-name').forEach(el => el.innerText = method);
+
+            const themeCard = document.getElementById('payment-theme-card');
+            themeCard.className =
+                `rounded-xl shadow-lg overflow-hidden text-white mb-6 relative transition-colors duration-300 ${themeClass}`;
+
+            document.getElementById('pay-admin-number').innerText = "Loading...";
+            db.collection("admin").doc("payment").get().then(doc => {
+                if (doc.exists) {
+                    const num = doc.data()[method.toLowerCase()] || "Not Available";
+                    document.getElementById('pay-admin-number').innerText = num;
+                }
+            });
+
+            document.getElementById('am-step-2').classList.add('hidden');
+            document.getElementById('am-step-3').classList.remove('hidden');
+        }
+
+        function backToMethodStep() {
+            document.getElementById('am-step-3').classList.add('hidden');
+            document.getElementById('am-step-2').classList.remove('hidden');
+        }
+
+        function copyPayNumber() {
+            const num = document.getElementById('pay-admin-number').innerText;
+            navigator.clipboard.writeText(num);
+            Swal.fire({
+                toast: true,
+                icon: 'success',
+                title: 'Number Copied!',
+                position: 'top',
+                showConfirmButton: true,
+                timer: 1500
+            });
+        }
+
+        function handleNewVerify() {
+            const trxId = document.getElementById('pay-trx-input').value.trim();
+            if (!trxId) {
+                return Swal.fire('Required', 'Please enter the Transaction ID.', 'warning');
+            }
+            if (isAutoPayEnabled) {
+                verifyAutoPayment(trxId, currentDepositAmount);
+            } else {
+                if (isDirectBuy) {
+                    Swal.fire('Notice', 'Manual verification is not supported for Instant Buy. Please contact support.',
+                        'warning');
+                } else {
+                    submitDeposit(trxId, currentDepositAmount);
+                }
+            }
+        }
+
+        function submitDeposit(trxId, amount) {
+            Swal.showLoading();
+            db.collection('deposits').add({
+                userId: currentUser.uid,
+                amount: parseInt(amount),
+                trxId: trxId.toUpperCase(),
+                status: 'pending',
+                date: new Date(),
+                userEmail: currentUser.email,
+                method: currentPaymentMethod
+            }).then(() => {
+                Swal.fire({
+                    title: 'Request Submitted',
+                    text: 'Your deposit request has been sent. Please wait for admin approval.',
+                    icon: 'success',
+                    confirmButtonColor: '#d33'
+                }).then(() => {
+                    showSec('home');
+                });
+            }).catch(err => Swal.fire('Error', err.message, 'error'));
+        }
+
+        async function verifyAutoPayment(trxId, amount) {
+            trxId = trxId.toUpperCase();
+            Swal.fire({
+                title: 'Verifying...',
+                text: 'Please wait while we check your transaction.',
+                didOpen: () => { Swal.showLoading() }
+            });
+
+            const existingTrxCheck = await db.collection('deposits').where('trxId', '==', trxId).limit(1).get();
+            if (!existingTrxCheck.empty) {
+                return Swal.fire('Used', 'This Transaction ID has already been used.', 'error');
+            }
+
+            rtdb.ref('XNXANIKPAY').orderByChild('txid').equalTo(trxId).once('value', async (snapshot) => {
+                if (!snapshot.exists()) {
+                    return Swal.fire('Not Found', 'Transaction ID not found. Please try again or contact support.',
+                        'error');
+                }
+
+                let paymentData = null;
+                snapshot.forEach((childSnapshot) => {
+                    paymentData = childSnapshot.val();
+                });
+
+                if (parseInt(paymentData.amount) !== parseInt(amount)) {
+                    return Swal.fire('Mismatch',
+                        `Amount mismatch! You entered ${amount} but system found ${paymentData.amount}.`,
+                        'error');
+                }
+
+                const amountToAdd = parseInt(paymentData.amount);
+                const userRef = db.collection('users').doc(currentUser.uid);
+
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const userDoc = await transaction.get(userRef);
+                        const newBalance = (userDoc.data().balance || 0) + amountToAdd;
+                        transaction.update(userRef, { balance: newBalance });
+                    });
+
+                    await db.collection('deposits').add({
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email,
+                        amount: amountToAdd,
+                        trxId: trxId,
+                        status: 'approved',
+                        method: currentPaymentMethod + ' (Auto)',
+                        date: new Date()
+                    });
+
+                    if (isDirectBuy && pendingDirectOrder) {
+                        userBalance += amountToAdd;
+                        Swal.fire({
+                            title: 'Payment Verified!',
+                            text: 'Processing your order now...',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: true
+                        });
+
+                        if (pendingDirectOrder.gameType === 'code') {
+                            await processVoucherOrder(pendingDirectOrder.playerId);
+                        } else if (pendingDirectOrder.gameType === 'auto-topup') {
+                            await processAutoTopUpOrder(pendingDirectOrder.playerId);
+                        } else {
+                            processUidOrder(pendingDirectOrder.playerId);
+                        }
+                        isDirectBuy = false;
+                        pendingDirectOrder = null;
+                    } else {
+                        Swal.fire('Success', `Successfully added ৳${amountToAdd} to your wallet.`, 'success')
+                            .then(() => showSec('home'));
+                    }
+                } catch (error) {
+                    console.error("Auto payment error:", error);
+                    Swal.fire('Failed', 'System error during balance update. Contact support.', 'error');
+                }
+            });
+        }
+
+        // ============================================================
+        // FAB
+        // ============================================================
+        function toggleFabMenu() {
+            const fabContainer = document.getElementById('fab-container');
+            const helpText = document.getElementById('fab-help-text');
+            fabContainer.classList.toggle('is-open');
+            if (fabContainer.classList.contains('is-open')) {
+                helpText.classList.add('opacity-0');
+            } else {
+                helpText.classList.remove('opacity-0');
+            }
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        loadGlobalSettings();
+        loadHowToVideo();
+        loadAppContent();
+
+        console.log('✅ IASAN TOPUP System Loaded Successfully!');
+        console.log('✅ Features: Wallet Pay, Instant Pay, Related Products, Auto Payment');
+    </script>
+</body>
+</html>
